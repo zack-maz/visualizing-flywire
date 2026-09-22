@@ -233,3 +233,47 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .segmented button, .legend-row, .partner, .check, #focus-results li { min-height: 44px; }
   .link-btn { min-height: 44px; }
 }
+
+/* ---------------------------------------------------------------- connection matrix */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.matrix-toggle { margin-top: 10px; }
+.matrix-panel {
+  position: fixed;
+  left: calc(var(--panel-w) + 2 * var(--edge));
+  bottom: var(--edge);
+  max-width: calc(100% - var(--panel-w) - 320px - 4 * var(--edge));
+  max-height: calc(100% - 2 * var(--edge));
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+}
+.matrix-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.matrix-head h2 { margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.matrix-head .segmented button { padding: 4px 8px; font-size: 12px; }
+.matrix-body { overflow: auto; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.matrix { border-collapse: separate; border-spacing: 2px; }
+.matrix td { width: 16px; height: 16px; min-width: 16px; padding: 0; background: var(--void); }
+.matrix td:not(.corner):hover { outline: 1px solid var(--bright); }
+.matrix th { padding: 0; font-weight: 400; }
+.matrix th button {
+  border: 0; background: none; padding: 0 6px 0 0; cursor: pointer; color: var(--text);
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em; white-space: nowrap;
+}
+.matrix th button:hover:not(:disabled) { color: var(--bright); }
+.matrix th button:disabled { color: var(--muted); cursor: default; }
+.matrix thead th { vertical-align: bottom; height: 1px; }
+.matrix thead th button { writing-mode: vertical-rl; transform: rotate(180deg); padding: 0 0 6px; max-height: 160px; overflow: hidden; text-overflow: ellipsis; }
+.matrix tbody th { text-align: right; }
+.matrix tbody th button { max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+.matrix .corner { background: none; vertical-align: bottom; text-align: right; }
+.matrix .corner span { color: var(--muted); font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: var(--tracking-label); white-space: nowrap; padding-right: 6px; }
+.matrix-key { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.matrix-ramp { width: 120px; height: 8px; }
+.matrix-key-note { margin-left: 4px; font-family: var(--font-body); font-size: 12px; }
+.matrix-readout { margin-top: 6px; min-height: 2.9em; max-width: 560px; color: var(--text); font-size: 12.5px; }
+
+@media (max-width: 720px) {
+  .matrix-panel { left: var(--edge); right: var(--edge); top: var(--edge); bottom: auto; max-width: none; max-height: 50%; }
+}

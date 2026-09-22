@@ -6,7 +6,8 @@ Repo: https://github.com/zack-maz/visualizing-flywire (private).
 
 ## 1. Current state (verified 2026-09-22)
 
-Vite + TypeScript + three.js viewer of all 139,248 FlyWire FAFB-783 neurons, one point each.
+Vite + TypeScript + three.js viewer of all 139,248 FlyWire FAFB-783 neurons, one point each,
+with a connection matrix between the groups of the current colour-by (§2b).
 
 **Layouts** (keys 1–6): Where = Anatomical, Soma, Mirrored · Maps = Flattened (UMAP 2D of in/out neuropil
 profile), Partners (SVD + UMAP 3D of connectivity), Sensory → motor (traversal step on x).
@@ -31,6 +32,7 @@ Categorical palette order in `src/labels.ts` passes the dataviz validator for ne
 | `src/main.ts` | Layout registry (`LAYOUTS`), CPU-owned positions + transitions, colour-by legend, focus search, picking, card, labels, `window.flywire` (read by the probe) |
 | `src/scene.ts` | Point shader: `position` (CPU), `aColor`, `aState` (HIDDEN/SHOWN/DIM/INPUT/OUTPUT); shell material |
 | `src/data.ts` | Loaders: neurons, groupings, meshes; lazy `loadLayout(id)`, `loadFlowRank`, `loadConnections` |
+| `src/matrix.ts` | Connection matrix panel (HTML table, computed client-side from `connections.bin`) |
 | `src/labels.ts` | Palette, display names (`valueLabel`, `shortLabel`) |
 | `scripts/neuropil_counts.py` | DuckDB pass over the remote synapse table → per (neuron, role in/out, neuropil) counts |
 | `scripts/build_data.py` | meshes, anatomical positions, `groupings.json/bin`, `layout_soma.bin`, `layout_flat.bin` |
@@ -101,6 +103,21 @@ Hub level (coreness), flow step and synapse count want a sequential single-hue r
 Would need `measures.json/bin` (uint8 quantised), a "Measures" optgroup, a ramp legend, and a validated
 sequential ramp (dataviz skill). Listed in BACKLOG "Colour by (continuous)".
 
+## 2b. Connection matrix (approved and built 2026-09-22)
+
+The user picked "Region connection matrix" from §5. Built generically, client-only (no new data file):
+- A **Connections** button in the Colour by section opens a matrix panel (bottom left of the viewport, beside the
+  side panel). Rows = the presynaptic group, columns = the postsynaptic group, for the **current colour-by grouping**
+ . It updates when colour-by changes.
+- Groups: every value when there are ≤ 24, otherwise the 16 largest + "Other". The none value is a last row/column when it has neurons.
+- Cell = summed synapses over pairs with 5+ synapses, from `connections.bin` (lazy, 36 MB, same as the card).
+- Two scales: **Share of row output** (default, linear 0–100%) and **Synapses** (log). One-hue sequential ramp
+  (orange, Tokyo Night hue; blue is reserved for the selection), validated with the dataviz validator `--ordinal --mode dark`.
+- It is an HTML `<table>`, so it is its own table view; each cell has a title and aria-label with the numbers.
+- Hover a cell: tooltip (A → B, synapses, % of A's output, % of B's input) and the 3D view dims everything but the two groups.
+  Click a row or column header: Focus on that group.
+- Probe: open the matrix for region, read the diagonal share, screenshot.
+
 ## 3. How to verify
 - `npx tsc --noEmit && npm run build`.
 - `npx vite --port 5199 --strictPort &` then `uv run --with playwright python scripts/ui_probe.py`
@@ -116,7 +133,7 @@ uppercase labels. Blue marks one thing per view. Sentence case, no exclamation m
 mobile. Honour prefers-reduced-motion. `src/brand.css` is a copy; re-copy to update, don't edit.
 
 ## 5. Open questions (never asked; defaults in force)
-- Region-to-region connection matrix chart? (Default: BACKLOG.)
+- Region-to-region connection matrix chart? **Answered: yes (§2b).**
 - Spectral clustering as a grouping? (Default: no.)
 - Continuous colour-by (2.3)? (Default: not yet.)
 - Repo visibility: created **private**. Flip with `gh repo edit zack-maz/visualizing-flywire --visibility public

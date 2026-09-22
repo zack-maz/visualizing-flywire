@@ -43,7 +43,7 @@ Leiden and all others leave ~8k neurons with no strong connection as singletons.
 - Label-agreement matrix across all label pairs ✅ (analysis section 1)
 - Neuropil × transmitter bars ✅
 - Local vs broad scatter (class spread vs member spread; the local / tiling / integrating kinds) ✅
-- **Region-to-region connection matrix / chord diagram** 🔻 — the likely next step once connections are in
+- *Built (PLAN §2b): connection matrix for any grouping.* Not built: chord diagram.
 - Path finder: shortest route between two neurons or classes 🔻
 - Left/right comparison panel ✅
 

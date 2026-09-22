@@ -5,6 +5,7 @@ import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer
 import { loadAll, loadConnections, loadFlowRank, loadLayout, type Connections, type Grouping } from './data';
 import { DIM, HIDDEN, INPUT, OUTPUT, SHOWN, createNeuronPoints, createShellMaterial, meshGeometry } from './scene';
 import { NEUTRAL, PALETTE, SUPER_CLASS_STYLE, shortLabel, valueLabel } from './labels';
+import { createMatrix } from './matrix';
 
 // The custom shaders write colours straight to the screen, so keep hex values as-is (no linear conversion).
 THREE.ColorManagement.enabled = false;
@@ -390,6 +391,7 @@ function applyColourBy() {
 let conn: Connections | null = null;
 let showPartners = true;
 const partnerState = new Map<number, number>();    // neuron -> INPUT | OUTPUT while a neuron is selected
+let matrixTest: ((i: number) => boolean) | null = null;   // neurons of the hovered matrix cell or header
 
 function updateState() {
   const fg = focus ? G(focus.grouping) : null;
@@ -399,6 +401,7 @@ function updateState() {
     let st = SHOWN;
     if (slotHidden[s]) st = HIDDEN;
     else if (partnersOn) st = i === selected ? SHOWN : partnerState.get(i) ?? DIM;
+    else if (matrixTest) st = matrixTest(i) ? SHOWN : DIM;
     else if ((previewSlot >= 0 && s !== previewSlot) || (fg && fg.codes[i] !== focus!.code)) st = DIM;
     stateArr[i] = st;
   }
@@ -710,7 +713,29 @@ function fillSelect(sel: HTMLSelectElement, value: string) {
 }
 const colourSel = $<HTMLSelectElement>('#colour-by');
 fillSelect(colourSel, colourBy);
-colourSel.addEventListener('change', () => { colourBy = colourSel.value; applyColourBy(); });
+colourSel.addEventListener('change', () => { colourBy = colourSel.value; applyColourBy(); renderMatrix(); });
+
+// ------------------------------------------------------------------ connection matrix
+const matrixEl = $('#matrix'), matrixToggle = $('#matrix-toggle');
+const matrix = createMatrix(matrixEl, {
+  onHover: (test) => { matrixTest = test; updateState(); },
+  onPick: (grouping, code) => setFocus(grouping, code),
+});
+function renderMatrix() {
+  if (matrixEl.hidden) return;
+  $('#matrix-title').textContent = `Connections · ${G(colourBy).label}`;
+  if (conn) { matrix.render(G(colourBy), conn); return; }
+  matrixEl.querySelector('.matrix-readout')!.textContent = 'Loading connections…';
+  loadConnections(N).then((c) => { conn = c; renderMatrix(); });
+}
+function showMatrix(on: boolean) {
+  matrixEl.hidden = !on;
+  matrixToggle.setAttribute('aria-expanded', String(on));
+  if (!on) { matrixTest = null; updateState(); }
+  renderMatrix();
+}
+matrixToggle.addEventListener('click', () => showMatrix(!!matrixEl.hidden));
+$('#matrix-close').addEventListener('click', () => showMatrix(false));
 $('#legend-all').addEventListener('click', () => { slotHidden.fill(false); soloSlot = -1; updateState(); });
 
 const toggle = (id: string, fn: (on: boolean) => void) => {
@@ -860,6 +885,6 @@ Object.assign(window, {
         partners: partnerState.size, labels: labels.filter((l) => l.obj.visible && !(l.obj.element as HTMLElement).classList.contains('overlap')).map((l) => l.spec.text).slice(0, 10),
       };
     },
-    setLayout, setFocus, select,
+    setLayout, setFocus, select, showMatrix,
   },
 });
