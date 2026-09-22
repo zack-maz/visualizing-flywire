@@ -336,7 +336,7 @@ function applyColourBy() {
   const g = G(colourBy);
   // Top values by count get the palette (super class keeps its canonical order); the rest share the neutral.
   const ranked = g.counts.map((c, code) => ({ c, code })).filter((v) => v.code > 0 && v.c > 0);
-  if (g.id !== 'super_class' && g.id !== 'flow' && g.id !== 'side') ranked.sort((a, b) => b.c - a.c);
+  if (!['super_class', 'flow', 'side', 'hub_band'].includes(g.id)) ranked.sort((a, b) => b.c - a.c);
   slotCodes = ranked.slice(0, LEGEND_TOP).map((v) => v.code);
   const slotByCode = new Map(slotCodes.map((c, s) => [c, s]));
   const colours = [...PALETTE.slice(0, LEGEND_TOP), NEUTRAL, NEUTRAL].map((h) => new THREE.Color(h));
@@ -548,7 +548,9 @@ function describe(i: number) {
     const inNp = G('in_neuropil').values[G('in_neuropil').codes[i]], outNp = G('out_neuropil').values[G('out_neuropil').codes[i]];
     rows.push(['In → out', `${inNp || '–'} → ${outNp || '–'}`], ['Region', val('region', i)], ['Soma', val('soma_cluster', i) || 'Outside the brain'],
       ['Lineage', [val('ito_lee_hemilineage', i), val('hartenstein_hemilineage', i)].filter(Boolean).join(' · ')],
-      ['Flow', val('flow', i)]);
+      ['Flow', val('flow', i)],
+      ['Module', val('leiden_coarse', i)], ['Flow module', val('infomap', i)], ['Connectivity type', val('conn_type', i)],
+      ['Hub level', val('hub_band', i)]);
     if (flowRank) rows.push(['Step', flowRank[i] === 255 ? 'Not reached from sensory' : `${flowRank[i]} from sensory`]);
   }
   const id = meta.rootIds[i];
@@ -695,10 +697,10 @@ for (const row of ['Where', 'Maps'] as const) {
   layoutRows.append(lab, seg);
 }
 
-// Grouping pickers: every grouping under Where / What / Lineage headings.
+// Grouping pickers: every grouping under Where / What / Lineage / Wiring headings.
 function fillSelect(sel: HTMLSelectElement, value: string) {
   sel.replaceChildren();
-  for (const [row, title] of [['where', 'Where'], ['what', 'What'], ['lineage', 'Lineage']] as const) {
+  for (const [row, title] of [['where', 'Where'], ['what', 'What'], ['lineage', 'Lineage'], ['wiring', 'Wiring']] as const) {
     const og = document.createElement('optgroup');
     og.label = title;
     for (const g of groupings.filter((x) => x.row === row)) og.append(new Option(`${g.label} (${(g.values.length - 1).toLocaleString()})`, g.id));

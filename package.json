@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "data": "bash scripts/download.sh && uv run --with duckdb python scripts/neuropil_counts.py && uv run --with pandas --with pyarrow --with numpy --with scikit-learn --with umap-learn python scripts/build_data.py && uv run --with pandas --with pyarrow --with numpy --with scipy --with scikit-learn --with umap-learn python scripts/build_connectome.py"
+    "data": "bash scripts/download.sh && uv run --with duckdb python scripts/neuropil_counts.py && uv run --with pandas --with pyarrow --with numpy --with scikit-learn --with umap-learn python scripts/build_data.py && uv run --with pandas --with pyarrow --with numpy --with scipy --with scikit-learn --with umap-learn python scripts/build_connectome.py && uv run --with numpy --with pandas --with scipy --with scikit-learn --with igraph --with leidenalg --with infomap python scripts/build_clusters.py"
   },
   "dependencies": {
     "three": "^0.186.0"

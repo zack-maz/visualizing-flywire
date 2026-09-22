@@ -1,7 +1,7 @@
 # Plan: fly brain explorer
 
-Handoff for a fresh session. §1 is what exists, §2 is the next build (approved by the user
-2026-09-22, not started), §3–§5 are how to work on it. Ideas not being built: [BACKLOG.md](./BACKLOG.md).
+Handoff for a fresh session. §1 is what exists, §2 is the algorithmic-groupings build (approved 2026-09-22,
+built 2026-09-22; 2.3 still optional), §3–§5 are how to work on it. Ideas not being built: [BACKLOG.md](./BACKLOG.md).
 Repo: https://github.com/zack-maz/visualizing-flywire (private).
 
 ## 1. Current state (verified 2026-09-22)
@@ -12,9 +12,10 @@ Vite + TypeScript + three.js viewer of all 139,248 FlyWire FAFB-783 neurons, one
 profile), Partners (SVD + UMAP 3D of connectivity), Sensory → motor (traversal step on x).
 The Balls and Fractal layouts were built, then **removed at the user's request**; don't re-add without asking.
 
-**Groupings** (14, generic): Where = hemisphere, region, neuropil, soma position (40 k-means clusters), input
+**Groupings** (20, generic): Where = hemisphere, region, neuropil, soma position (40 k-means clusters), input
 neuropil, output neuropil · What = flow, super class, cell class, cell sub class, cell type, hemibrain type ·
-Lineage = hemilineage Ito/Lee, Hartenstein. Each colours the cloud (top 10 values in colour, rest neutral,
+Lineage = hemilineage Ito/Lee, Hartenstein · Wiring = brain modules (Leiden, coarse + fine), flow modules (Infomap),
+connectivity types (HDBSCAN), partner clusters (k-means 1000), hub level (k-core bands). Each colours the cloud (top 10 values in colour, rest neutral,
 legend hover-to-isolate / click-hide / double-click-solo) and is searchable in Focus (dims the rest, frames the group).
 
 **Connections**: clicking a neuron lazy-loads `connections.bin` (36 MB), lists top 8 inputs/outputs in the card,
@@ -33,6 +34,7 @@ Categorical palette order in `src/labels.ts` passes the dataviz validator for ne
 | `src/labels.ts` | Palette, display names (`valueLabel`, `shortLabel`) |
 | `scripts/neuropil_counts.py` | DuckDB pass over the remote synapse table → per (neuron, role in/out, neuropil) counts |
 | `scripts/build_data.py` | meshes, anatomical positions, `groupings.json/bin`, `layout_soma.bin`, `layout_flat.bin` |
+| `scripts/build_clusters.py` | Wiring groupings appended to `groupings.json/bin` (idempotent), `coreness.bin` (uint16 per neuron) |
 | `scripts/build_connectome.py` | `connections.bin` (CSR both directions, ≥5 synapses), flow rank + `layout_flow.bin`, `layout_partners.bin` |
 | `scripts/class_vs_neuropil.py` | Research: labels vs neuropil profiles → `analysis/*.csv` |
 | `scripts/grouping_candidates.py` | Benchmark of clustering algorithms → `analysis/grouping_candidates.csv` (results in BACKLOG) |
@@ -52,10 +54,13 @@ Categorical palette order in `src/labels.ts` passes the dataviz validator for ne
 - Sensory → motor: 22 steps; Kenyon/ALPN median step 3, visual projection 7, descending 4, motor 4; 4,576 unreached.
   (Descending is not late; reported to the user, threshold not tuned.)
 - Role-split synapse counts reproduce every `analysis/*.csv` byte for byte.
+- Wiring groupings (build_clusters.py, ~2.5 min): Leiden 12/61 groups ≥ 50 (NMI region 0.62/0.52), Infomap 150 ≥ 50
+  (NMI cell type 0.39), connectivity types 529 ≥ 50 (NMI cell type 0.69 before noise assignment, 0.62 after; HDBSCAN
+  noise 34%), partner clusters 910 ≥ 50 (0.63), hub bands k < 19 / 19–29 / 30–48 / 49–54 / ≥ 55. 7,979 neurons unconnected.
 - Analysis headlines: NMI(cell class, main neuropil) 0.52; neuropil profile predicts central-brain class 99%,
   hemilineage 41%; 68% of central neurons have no cell class.
 
-## 2. Next build: algorithmic groupings (approved, not started)
+## 2. Algorithmic groupings (built 2026-09-22; kept as the spec)
 
 The user approved all four recommendations from the benchmark (BACKLOG "Grouping algorithms benchmarked").
 Spectral clustering was recommended against (worse and slower than Leiden/Infomap); ask before adding it.

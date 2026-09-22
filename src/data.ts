@@ -6,7 +6,7 @@ export interface NeuronMeta {
   rootIds: string[];
   neuropils: { name: string; region: string }[];
 }
-export type GroupingRow = 'where' | 'what' | 'lineage';
+export type GroupingRow = 'where' | 'what' | 'lineage' | 'wiring';
 export interface GroupingMeta {
   id: string;
   label: string;

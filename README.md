@@ -20,9 +20,21 @@ A 3D point cloud of all 139,248 neurons in the adult fruit fly brain, from the
 
 Every grouping can colour the cloud and be searched in Focus.
 
-| Where | What | Lineage |
-|---|---|---|
-| Hemisphere, region (Ito et al. 2014 super groups), main neuropil, soma position (40 k-means clusters), input neuropil, output neuropil | Flow, super class, cell class, cell sub class, cell type, hemibrain type | Hemilineage (Ito/Lee), hemilineage (Hartenstein) |
+| Where | What | Lineage | Wiring |
+|---|---|---|---|
+| Hemisphere, region (Ito et al. 2014 super groups), main neuropil, soma position (40 k-means clusters), input neuropil, output neuropil | Flow, super class, cell class, cell sub class, cell type, hemibrain type | Hemilineage (Ito/Lee), hemilineage (Hartenstein) | Brain modules, brain modules (fine), flow modules, connectivity types, partner clusters, hub level |
+
+The Wiring groupings come from the connections alone (pairs with 5+ synapses), never from the annotations:
+
+- **Brain modules**: Leiden communities of the undirected graph (resolution 1; fine: resolution 5).
+- **Flow modules**: Infomap on the directed graph: groups that information tends to circulate within.
+- **Connectivity types**: HDBSCAN on the Partners map; the neurons it leaves unassigned join their nearest cluster.
+- **Partner clusters**: k-means (k = 1,000) on each neuron's input and output partners.
+- **Hub level**: k-core coreness, in bands at the 50th, 80th, 95th and 99th percentiles.
+
+Each value is named after what dominates it: modules by region (`M3 · OL_R 94%`), connectivity types
+and partner clusters by cell type (`C5 · T4b 50%`). Neurons with no 5+ synapse partner, and modules
+under 20 neurons, have no value.
 
 Colour by shows the ten largest values in colour and the rest in a neutral; hover a legend row to isolate it.
 

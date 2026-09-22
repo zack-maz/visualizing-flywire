@@ -48,8 +48,22 @@ async def main():
         await pg.wait_for_function("() => flywire.state.partners > 0", timeout=120000)
         await pg.wait_for_timeout(2000)
         print("selected:", await pg.evaluate(STATE))
-        print("card:", (await pg.inner_text("#info"))[:400].replace("\n", " | "))
+        print("card:", (await pg.inner_text("#info"))[:600].replace("\n", " | "))
         await pg.screenshot(path=D + "11_partners.png")
+
+        # Wiring groupings: colour by each one and read the legend.
+        await pg.keyboard.press("Escape")
+        await pg.click('[data-layout="partners"]')
+        await pg.wait_for_function(SETTLED, timeout=300000)
+        for n, gid in enumerate(["leiden_coarse", "leiden_fine", "infomap", "conn_type", "conn_kmeans", "hub_band"], start=12):
+            await pg.select_option("#colour-by", gid)
+            await pg.wait_for_timeout(1500)
+            rows = await pg.eval_on_selector_all("#legend .legend-row", "els => els.map(e => e.innerText.replace(/\\n/g, ' '))")
+            print(f"legend {gid}:", rows[:3], "…", rows[-2:])
+            await pg.screenshot(path=D + f"{n}_{gid}.png")
+        await pg.fill("#focus-search", "T4a")
+        await pg.wait_for_selector("#focus-results li")
+        print("search T4a:", await pg.eval_on_selector_all("#focus-results li", "els => els.slice(0,6).map(e => e.innerText.replace(/\\n/g, ' '))"))
         print("console errors:", errors or "none")
         await b.close()
 

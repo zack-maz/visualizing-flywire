@@ -118,9 +118,12 @@ export function valueLabel(grouping: string, value: string): string {
   }
 }
 
+const WIRING = new Set(['leiden_coarse', 'leiden_fine', 'infomap', 'conn_type', 'conn_kmeans', 'hub_band']);
+
 /** Short name for a floating label: codes stay codes, with underscores as spaces. */
 export function shortLabel(grouping: string, value: string): string {
   if (grouping === 'region') return superGroupShortLabel(value);
+  if (WIRING.has(grouping)) return value.split(/ · |, /)[0];   // "M3 · OL_R 94%" -> "M3", "Core, top 1% …" -> "Core"
   if (grouping === 'super_class' || grouping === 'flow' || grouping === 'side') return valueLabel(grouping, value).replace(/ \(.*\)$/, '');
   return value.replace(/_/g, ' ');
 }
