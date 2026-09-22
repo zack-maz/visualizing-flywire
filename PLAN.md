@@ -1,4 +1,4 @@
-# Plan: fly brain explorer
+# Plan: Fly Brain Explorer
 
 Handoff for a fresh session. §1 is what exists, §2 is the algorithmic-groupings build (approved 2026-09-22,
 built 2026-09-22; 2.3 still optional), §3–§5 are how to work on it. Ideas not being built: [BACKLOG.md](./BACKLOG.md).

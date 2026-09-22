@@ -1,4 +1,4 @@
-# Fly brain explorer
+# Fly Brain Explorer
 
 A 3D point cloud of all 139,248 neurons in the adult fruit fly brain, from the
 [FlyWire](https://flywire.ai) connectome (FAFB release 783). Each neuron is one point.
