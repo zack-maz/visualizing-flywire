@@ -91,6 +91,18 @@ async def main():
         await pg.wait_for_timeout(1500)
         print("matrix cell_type rows:", await pg.eval_on_selector_all("#matrix tbody th", "els => els.map(e => e.innerText)"))
         await pg.screenshot(path=D + "20_matrix_cell_type.png")
+        # The open panel keeps one size whatever is hovered or shown.
+        rect = "() => { const r = document.querySelector('#matrix').getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map(Math.round).join(','); }"
+        sizes = set()
+        for gid in ["cell_type", "region", "side", "hub_band"]:
+            await pg.select_option("#colour-by", gid)
+            await pg.wait_for_timeout(300)
+            sizes.add(await pg.evaluate(rect))
+            for sel in ["tbody tr:nth-child(1) td:nth-child(2)", "tbody tr:nth-child(2) td:nth-child(3)", "tbody tr:last-child td:last-child", "thead th:nth-child(2)", "tbody tr:nth-child(1) th"]:
+                await pg.hover(f"#matrix {sel}")
+                sizes.add(await pg.evaluate(rect))
+        print("matrix panel sizes seen:", sizes)
+        await pg.select_option("#colour-by", "cell_type")
         # With a neuron selected the card (bottom right) must not run under the tab (top right).
         await pg.evaluate("() => flywire.select(5000)")
         await pg.wait_for_function("() => flywire.state.partners > 0", timeout=120000)

@@ -247,7 +247,7 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   top: var(--edge);
   right: var(--edge);
   max-width: calc(100% - var(--panel-w) - 3 * var(--edge));
-  max-height: 62%;
+  max-height: calc(100% - 2 * var(--edge));
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -255,7 +255,12 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   background: var(--panel);
   border: 1px solid var(--hairline);
 }
-.matrix-panel.open { border-color: var(--line-strong); }
+/* Open, the panel has one fixed size, so hover text never resizes it and moves the cells under the pointer. */
+.matrix-panel.open {
+  width: min(620px, calc(100% - var(--panel-w) - 3 * var(--edge)));
+  height: min(610px, 72%);
+  border-color: var(--line-strong);
+}
 .matrix-head { display: flex; align-items: center; gap: 12px; padding-right: 10px; }
 .matrix-tab {
   display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; min-height: 40px;
@@ -269,9 +274,9 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .matrix-scale { display: none; }
 .matrix-panel.open .matrix-scale { display: flex; }
 .matrix-head .segmented button { padding: 4px 8px; font-size: 12px; }
-.matrix-content { display: flex; flex-direction: column; min-height: 0; padding: 4px 14px 12px; }
+.matrix-content { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 4px 14px 12px; }
 .matrix-content[hidden] { display: none; }
-.matrix-body { min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.matrix-body { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
 .matrix { border-collapse: separate; border-spacing: 2px; }
 .matrix td { width: 16px; height: 16px; min-width: 16px; padding: 0; background: var(--void); }
 .matrix td:not(.corner):hover { outline: 1px solid var(--bright); }
@@ -288,12 +293,17 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .matrix tbody th button { max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
 .matrix .corner { background: none; vertical-align: bottom; text-align: right; }
 .matrix .corner span { color: var(--muted); font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: var(--tracking-label); white-space: nowrap; padding-right: 6px; }
-.matrix-key { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.matrix-key { flex: none; display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--muted); font-family: var(--font-mono); font-size: 10px; }
 .matrix-ramp { width: 120px; height: 8px; }
 .matrix-key-note { margin-left: 4px; font-family: var(--font-body); font-size: 12px; }
-.matrix-readout { margin-top: 6px; min-height: 2.9em; max-width: 560px; color: var(--text); font-size: 12.5px; }
+.matrix-readout {
+  flex: none; height: calc(3 * 1.45em); margin-top: 6px; overflow: hidden;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+  color: var(--text); font-size: 12.5px; line-height: 1.45;
+}
 
 @media (max-width: 720px) {
   .matrix-panel { left: var(--edge); max-width: none; max-height: 45%; }
+  .matrix-panel.open { width: auto; height: 45%; }
   .card { top: calc(2 * var(--edge) + var(--matrix-h, 0px)); }
 }
