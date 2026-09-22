@@ -25,6 +25,9 @@ async def main():
         await pg.wait_for_selector("#loading", state="detached", timeout=120000)
         await pg.wait_for_timeout(1500)
         print("anatomical:", await pg.evaluate(STATE))
+        print("matrix closed on load:", not await pg.is_visible("#matrix"))
+        print("side panel scrolls to the end:", await pg.evaluate("() => { const p = document.querySelector('#panel'); p.scrollTop = 1e6; return p.querySelector('.credit').getBoundingClientRect().bottom <= p.getBoundingClientRect().bottom + 1; }"))
+        await pg.evaluate("() => { document.querySelector('#panel').scrollTop = 0; }")
         await pg.screenshot(path=D + "1_anatomical.png")
 
         for n, lid in enumerate(["soma", "mirrored", "flat", "partners", "flow"], start=2):

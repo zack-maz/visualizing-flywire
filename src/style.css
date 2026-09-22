@@ -45,15 +45,18 @@ p { max-width: none; }
   left: var(--edge);
   width: var(--panel-w);
   max-height: calc(100% - 2 * var(--edge));
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto;                 /* the whole panel scrolls as one, title included */
+  overscroll-behavior: contain;     /* a scroll that hits the end stays in the panel */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  z-index: 2;                       /* above the floating labels */
   background: var(--panel);
   border: 1px solid var(--hairline);
 }
 .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 16px 16px 12px; }
 h1 { font-size: var(--size-lede); }
 .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
-.panel-body { overflow-y: auto; padding: 0 16px 16px; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.panel-body { padding: 0 16px 16px; }
 body.panel-collapsed .panel-body { display: none; }
 body.panel-collapsed #panel-toggle { transform: rotate(180deg); }
 
@@ -185,6 +188,8 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   background: var(--panel);
   border: 1px solid var(--hairline);
   pointer-events: auto;
+  overscroll-behavior: contain;
+  z-index: 2;
 }
 .card.selected { border-color: var(--line-strong); }
 .info-type { color: var(--bright); font-size: var(--size-title); font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
@@ -214,6 +219,7 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 #loading {
   position: fixed;
   inset: 0;
+  z-index: 10;
   display: grid;
   place-content: center;
   justify-items: center;
@@ -246,13 +252,15 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   display: flex;
   flex-direction: column;
   padding: 12px 14px;
+  z-index: 2;
   background: var(--panel);
   border: 1px solid var(--hairline);
 }
+.matrix-panel[hidden] { display: none; }   /* display: flex above would otherwise override [hidden] */
 .matrix-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .matrix-head h2 { margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .matrix-head .segmented button { padding: 4px 8px; font-size: 12px; }
-.matrix-body { overflow: auto; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.matrix-body { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
 .matrix { border-collapse: separate; border-spacing: 2px; }
 .matrix td { width: 16px; height: 16px; min-width: 16px; padding: 0; background: var(--void); }
 .matrix td:not(.corner):hover { outline: 1px solid var(--bright); }
