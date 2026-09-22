@@ -161,7 +161,7 @@ for gid in WIRING_IDS:
     blob = code.astype(dtype).tobytes()
     blob += b"\0" * (-len(blob) % 4)
     g_meta.append({
-        "id": gid, "label": label, "row": "wiring", "none": NONE, "sided": False,
+        "id": gid, "label": label, "row": "wiring", "none": "No strong connection" if gid == "hub_band" else NONE, "sided": False,
         "values": [""] + values,
         "counts": np.bincount(code, minlength=len(values) + 1).tolist(),
         "offset": offset, "bytes": np.dtype(dtype).itemsize,
