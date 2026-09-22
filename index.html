@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Fly brain explorer</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/HankenGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <canvas id="viewport"></canvas>
+    <div id="labels"></div>
+
+    <aside id="panel">
+      <header class="panel-head">
+        <div>
+          <h1>Fly brain explorer</h1>
+          <p class="sub">Every neuron in the adult fruit fly brain, one point each</p>
+        </div>
+        <button id="panel-toggle" class="icon-btn" aria-label="Collapse panel" title="Collapse panel">⟨</button>
+      </header>
+
+      <div class="panel-body">
+        <dl class="stats">
+          <div><dt class="label">Neurons</dt><dd id="stat-neurons">–</dd></div>
+          <div><dt class="label">Neuropils</dt><dd id="stat-neuropils">–</dd></div>
+          <div><dt class="label">Cell types</dt><dd id="stat-types">–</dd></div>
+        </dl>
+
+        <section>
+          <h2>Layout</h2>
+          <div class="layout-rows" id="layouts">
+            <!-- filled from the layout registry in main.ts -->
+          </div>
+          <p class="hint" id="layout-hint"></p>
+          <p class="status" id="layout-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section>
+          <div class="section-head">
+            <h2>Colour by</h2>
+            <button id="legend-all" class="link-btn">Show all</button>
+          </div>
+          <select id="colour-by" aria-label="Colour by"></select>
+          <div id="legend"></div>
+          <p class="hint">Hover to isolate · click to hide · double-click to show only one</p>
+        </section>
+
+        <section>
+          <h2>Focus</h2>
+          <div class="search" role="combobox" aria-haspopup="listbox" aria-owns="focus-results" aria-expanded="false">
+            <input id="focus-search" placeholder="Neuropil, class, type, lineage…" autocomplete="off" spellcheck="false"
+                   aria-autocomplete="list" aria-controls="focus-results" aria-label="Focus on a group" />
+            <button id="focus-clear" class="icon-btn" aria-label="Clear focus" hidden>×</button>
+            <ul id="focus-results" role="listbox" hidden></ul>
+          </div>
+          <p class="hint">Searches every grouping. Focus dims everything else and frames the group.</p>
+        </section>
+
+        <section>
+          <h2>Display</h2>
+          <label class="check"><input type="checkbox" id="opt-shells" checked /> Neuropil shells</label>
+          <label class="check"><input type="checkbox" id="opt-brain" checked /> Brain outline</label>
+          <label class="check"><input type="checkbox" id="opt-labels" checked /> Labels</label>
+          <label class="range"><span>Point size</span> <input type="range" id="opt-size" min="0.5" max="8" step="0.1" value="2.2" /></label>
+        </section>
+
+        <section>
+          <button id="help-toggle" class="link-btn" aria-expanded="false">Controls</button>
+          <div id="help" hidden>
+            <table>
+              <tr><td>Drag</td><td>Rotate</td></tr>
+              <tr><td>Right-drag / Shift-drag</td><td>Pan</td></tr>
+              <tr><td>Scroll</td><td>Zoom to cursor</td></tr>
+              <tr><td>W A S D · Q E</td><td>Fly (Shift = faster)</td></tr>
+              <tr><td>Click</td><td>Select neuron, show its partners</td></tr>
+              <tr><td>Double-click</td><td>Fly to neuron</td></tr>
+              <tr><td>F</td><td>Fly to selection</td></tr>
+              <tr><td>Space · 1–6</td><td>Next layout · pick layout</td></tr>
+              <tr><td>R</td><td>Reset view</td></tr>
+              <tr><td>Esc</td><td>Clear selection and focus</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <footer class="credit">
+          Data: <a href="https://flywire.ai" target="_blank" rel="noopener">FlyWire</a> FAFB release 783
+          (Dorkenwald et al. 2024; Schlegel et al. 2024).
+        </footer>
+      </div>
+    </aside>
+
+    <div id="info" class="card" hidden></div>
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <div id="loading-text" class="label">Loading connectome…</div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,252 @@
+/* Copied from ~/Documents/PROJECTS/BRAND/brand.css (2026-09-22). Re-copy to pick up brand changes; don't edit here. */
+/* ============================================================================
+   #offthegrid — Zack Maz brand stylesheet
+   ----------------------------------------------------------------------------
+   Drop-in tokens and base styles so any project under BRAND/ looks like the
+   portfolio. Import it first, then override nothing but layout.
+
+       <link rel="stylesheet" href="../brand.css">      — HTML
+       @import "../brand.css";                            — CSS
+       @import "../styles/brand.css";                     — Next.js: app/globals.css,
+                                                            via scripts/sync-brand.mjs
+
+   Where these values come from
+     Colours   Tokyo Night (night) as rendered by setup/my-workbench —
+               nvim/.config/nvim/lua/plugins/colorscheme.lua, bg overridden to
+               #0A0A0A. Same palette as the terminal, so screenshots match.
+     Art       setup/my-workbench/images/cover-nobg.txt — the canonical Zima
+               ASCII. Import that file; never paste a copy.
+     Rationale website/research/DIRECTION.md (design direction, locked).
+   Scale     Revised 2026-09-18 to the canvas decisions (DIRECTION §0.6–0.7):
+             Hanken Grotesk, 16px body, 28px hero name, calm scale. The
+             previous values (Instrument Sans, 18px, 168px hero) are superseded.
+
+   The four rules, in priority order. When two conflict, the higher one wins:
+     1. Readability — the text is the product.
+     2. Simplicity  — fewer elements, fonts, effects, dependencies.
+     3. Taste       — restraint, precise spacing, considered type.
+     4. References  — Zima Blue / BLAME! / #offthegrid are seasoning.
+
+   House rules this file assumes:
+     · Blue is rationed. In any one view it marks ONE thing.
+     · Mono is for short labels only. Never paragraphs.
+     · Body text ≥ 7:1 contrast, 60–68 character measure.
+     · Motion is scroll-linked, never scroll-jacked, and respects
+       prefers-reduced-motion.
+     · Dark only, deliberately. There is no light theme; a project that needs
+       one is a different project.
+   ========================================================================= */
+
+:root {
+  /* --- Colour ---------------------------------------------------------- */
+  /* Contrast ratios are against --void. */
+  --void:       #0A0A0A;  /* page ground; matches the terminal background   */
+  --panel:      #0D0F12;  /* image wells, raised surfaces                   */
+  --hairline:   #1E2227;  /* rules, dividers, table borders                 */
+  --line-strong:#2A2F35;  /* borders that need to be seen                   */
+  --muted:      #7C848D;  /* metadata, labels            5.2 : 1  (AA)      */
+  --text:       #C9CDD2;  /* body copy                  12.4 : 1  (AAA)     */
+  --bright:     #E8EBED;  /* headings, links            16.5 : 1  (AAA)     */
+  --accent:     #7AA2F7;  /* Tokyo Night blue            7.9 : 1  (AAA)     */
+
+  /* Use sparingly; these exist so status never borrows --accent. */
+  --good:       #9ECE6A;
+  --warn:       #E0AF68;
+  --bad:        #F7768E;
+
+  /* --- Type ------------------------------------------------------------ */
+  /* Swap --font-display to rebrand; components reference only the vars.    */
+  --font-display: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body:    "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* Extreme contrast is deliberate: very large, or small. Little between.  */
+  --size-display: 28px;   /* hero name — desktop only                       */
+  --size-display-sm: 26px;/* hero name — mobile                             */
+  --size-h1:       36px;
+  --size-statement:24px;
+  --size-title:    20px;
+  --size-lede:     18px;
+  --size-body:     16px;
+  --size-small:    14px;
+  --size-label:    12px;  /* mono                                           */
+  --size-label-sm: 11px;  /* mono                                           */
+
+  --leading-display: 1.1;
+  --leading-tight:   1.15;
+  --leading-body:    1.6;
+  --tracking-display:-0.03em;
+  --tracking-label:  0.08em;
+  --measure:         600px;  /* ≈ 60–68 characters at --size-body           */
+
+  /* --- Space ----------------------------------------------------------- */
+  --gutter:      24px;   /* grid gutter                                     */
+  --margin:      80px;   /* page margin, desktop                            */
+  --margin-sm:   24px;   /* page margin, mobile                             */
+  --section:     56px;   /* space between sections                          */
+  --columns:     12;
+
+  /* --- Motion ---------------------------------------------------------- */
+  --ease:        cubic-bezier(.2, .7, .2, 1);
+  --fast:        200ms;
+  --slow:        600ms;
+}
+
+/* --- Base ------------------------------------------------------------- */
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  color: var(--bright);
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--size-h1); letter-spacing: -0.03em; }
+h2 { font-size: var(--size-small); }   /* section headings are small, not loud */
+
+p {
+  margin: 0;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+a         { color: var(--bright); text-decoration: none; }
+a:hover   { color: #FFFFFF; }
+a:focus-visible,
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+hr { border: 0; border-top: 1px solid var(--hairline); margin: 0; }
+
+::selection { background: var(--accent); color: var(--void); }
+
+small, figcaption { font-size: var(--size-small); color: var(--muted); }
+
+/* --- Primitives -------------------------------------------------------- */
+
+/* Short mono label. The ONLY place mono is allowed. */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The hero name. */
+.display {
+  font-size: var(--size-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 500;
+  color: var(--bright);
+}
+
+/* The Zima ASCII. Import cover-nobg.txt into it; do not paste a copy.
+   Mark it aria-hidden and label the wrapping <figure role="img">. */
+.ascii {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.35;
+  color: var(--accent);
+  white-space: pre;
+}
+
+/* The one accent mark: an active row, a linked item. Never decoration. */
+.tile { width: 10px; height: 10px; background: var(--accent); flex-shrink: 0; }
+
+/* The descent line: a rule down the left edge, filled by scroll progress. */
+.rule      { position: absolute; left: 32px; top: 80px; bottom: 80px; width: 1px; background: var(--hairline); }
+.rule-fill { position: absolute; left: 32px; top: 80px; width: 1px; background: var(--bright); opacity: .7; }
+
+/* 12-column grid. Mostly implicit — show it only where it helps. */
+.grid { display: grid; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); gap: var(--gutter); }
+
+/* Label-left, content-right section. The workhorse layout. */
+.section        { display: grid; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); gap: var(--gutter); border-top: 1px solid var(--hairline); padding-top: 24px; }
+.section > h2   { grid-column: 1 / span 3; padding-top: 5px; }
+.section > .body{ grid-column: 4 / span 8; max-width: var(--measure); display: flex; flex-direction: column; gap: var(--gutter); }
+
+/* Index row: a list of projects, posts, anything enumerable. */
+.row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 56px;
+  gap: var(--gutter);
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--hairline);
+  color: var(--text);
+}
+.row-title { font-size: var(--size-title); font-weight: 500; letter-spacing: -0.015em; color: var(--bright); }
+
+/* Placeholder well for an image that does not exist yet. */
+.well {
+  background-color: var(--panel);
+  background-image: repeating-linear-gradient(135deg, rgba(232,235,237,.045) 0 1px, transparent 1px 12px);
+  border: 1px solid var(--hairline);
+}
+
+/* --- Responsive -------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  :root {
+    --margin: var(--margin-sm);
+    --section: 72px;
+    --size-display: var(--size-display-sm);
+    --size-h1: 30px;
+    --size-statement: 22px;
+    --size-title: 18px;
+    --size-lede: 16px;
+  }
+  .section       { display: flex; flex-direction: column; gap: 16px; }
+  .row           { grid-template-columns: 1fr; gap: 8px; }
+  .ascii         { font-size: 7px; }
+  /* Tap targets never below 44px. */
+  a, button      { min-height: 44px; }
+}
+
+/* --- Motion ------------------------------------------------------------ */
+
+@keyframes rise   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes arrive { from { opacity: 0; } to { opacity: 1; } }
+
+.rise   { animation: rise var(--slow) var(--ease) both; }
+.arrive { animation: arrive var(--slow) var(--ease) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   Beyond the web
+   ----------------------------------------------------------------------------
+   Terminal / editor  Tokyo Night (night), background #0A0A0A. Already set in
+                      setup/my-workbench — inherit it, don't restate it.
+   READMEs            The ASCII cover, then a letterspaced "o f f   t h e
+                      g r i d" tagline. Keep the explicit width attribute on
+                      the image and the ?v=<sha> cache-buster; see
+                      setup/my-workbench/docs/cover-sync.md.
+   Diagrams           Hairline strokes on --void, neutral fills, ONE accent
+                      line for the relationship being demonstrated. Solid mark
+                      = linked, hollow = standalone. Never colour alone.
+   Writing            Sentence case. No exclamation marks. Say the thing, then
+                      stop — the design is restraint, so the prose is too.
+   ========================================================================= */
