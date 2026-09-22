@@ -129,7 +129,7 @@ The user picked "Region connection matrix" from §5. Built generically, client-o
 ## 4. Brand rules (from BRAND/brand.css — import values, don't invent)
 Tokens `--void #0A0A0A`, `--panel #0D0F12`, `--hairline #1E2227`, `--line-strong #2A2F35`, `--muted #7C848D`,
 `--text #C9CDD2`, `--bright #E8EBED`, `--accent #7AA2F7`. Hanken Grotesk body, JetBrains Mono only for short
-uppercase labels. Blue marks one thing per view. Sentence case, no exclamation marks. Tap targets ≥ 44 px on
+uppercase labels. Blue marks one thing per view. Sentence case (except the product name, "Fly Brain Explorer", at the user's request), no exclamation marks. Tap targets ≥ 44 px on
 mobile. Honour prefers-reduced-motion. `src/brand.css` is a copy; re-copy to update, don't edit.
 
 ## 5. Open questions (never asked; defaults in force)
