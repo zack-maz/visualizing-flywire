@@ -106,8 +106,8 @@ sequential ramp (dataviz skill). Listed in BACKLOG "Colour by (continuous)".
 ## 2b. Connection matrix (approved and built 2026-09-22)
 
 The user picked "Region connection matrix" from §5. Built generically, client-only (no new data file):
-- A **Connections** button in the Colour by section opens a matrix panel (bottom left of the viewport, beside the
-  side panel). Rows = the presynaptic group, columns = the postsynaptic group, for the **current colour-by grouping**
+- A collapsible **Connections** floating tab, top right (the user's request; was a link in the side panel). The info
+  card (bottom right) caps its height with `--matrix-h`, published by a ResizeObserver, so the two never overlap. Rows = the presynaptic group, columns = the postsynaptic group, for the **current colour-by grouping**
  . It updates when colour-by changes.
 - Groups: every value when there are ≤ 24, otherwise the 16 largest + "Other". The none value is a last row/column when it has neurons.
 - Cell = summed synapses over pairs with 5+ synapses, from `connections.bin` (lazy, 36 MB, same as the card).

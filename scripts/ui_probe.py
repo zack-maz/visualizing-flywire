@@ -25,7 +25,8 @@ async def main():
         await pg.wait_for_selector("#loading", state="detached", timeout=120000)
         await pg.wait_for_timeout(1500)
         print("anatomical:", await pg.evaluate(STATE))
-        print("matrix closed on load:", not await pg.is_visible("#matrix"))
+        print("matrix tab collapsed on load:", await pg.is_visible("#matrix-toggle") and not await pg.is_visible("#matrix-content"),
+              await pg.inner_text("#matrix-title"))
         print("side panel scrolls to the end:", await pg.evaluate("() => { const p = document.querySelector('#panel'); p.scrollTop = 1e6; return p.querySelector('.credit').getBoundingClientRect().bottom <= p.getBoundingClientRect().bottom + 1; }"))
         await pg.evaluate("() => { document.querySelector('#panel').scrollTop = 0; }")
         await pg.screenshot(path=D + "1_anatomical.png")
@@ -90,6 +91,16 @@ async def main():
         await pg.wait_for_timeout(1500)
         print("matrix cell_type rows:", await pg.eval_on_selector_all("#matrix tbody th", "els => els.map(e => e.innerText)"))
         await pg.screenshot(path=D + "20_matrix_cell_type.png")
+        # With a neuron selected the card (bottom right) must not run under the tab (top right).
+        await pg.evaluate("() => flywire.select(5000)")
+        await pg.wait_for_function("() => flywire.state.partners > 0", timeout=120000)
+        await pg.wait_for_timeout(1500)
+        print("card clears the matrix:", await pg.evaluate("() => document.querySelector('#info').getBoundingClientRect().top >= document.querySelector('#matrix').getBoundingClientRect().bottom"))
+        await pg.screenshot(path=D + "21_matrix_and_card.png")
+        await pg.click("#matrix-toggle")
+        await pg.wait_for_timeout(800)
+        print("collapsed again:", not await pg.is_visible("#matrix-content"))
+        await pg.screenshot(path=D + "22_matrix_collapsed_card.png")
         print("console errors:", errors or "none")
         await b.close()
 

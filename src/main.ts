@@ -716,26 +716,31 @@ fillSelect(colourSel, colourBy);
 colourSel.addEventListener('change', () => { colourBy = colourSel.value; applyColourBy(); renderMatrix(); });
 
 // ------------------------------------------------------------------ connection matrix
-const matrixEl = $('#matrix'), matrixToggle = $('#matrix-toggle');
+const matrixEl = $('#matrix'), matrixToggle = $('#matrix-toggle'), matrixContent = $('#matrix-content');
+let matrixOpen = false;
 const matrix = createMatrix(matrixEl, {
   onHover: (test) => { matrixTest = test; updateState(); },
   onPick: (grouping, code) => setFocus(grouping, code),
 });
 function renderMatrix() {
-  if (matrixEl.hidden) return;
   $('#matrix-title').textContent = `Connections · ${G(colourBy).label}`;
+  if (!matrixOpen) return;
   if (conn) { matrix.render(G(colourBy), conn); return; }
   matrixEl.querySelector('.matrix-readout')!.textContent = 'Loading connections…';
   loadConnections(N).then((c) => { conn = c; renderMatrix(); });
 }
 function showMatrix(on: boolean) {
-  matrixEl.hidden = !on;
+  matrixOpen = on;
+  matrixContent.hidden = !on;
+  matrixEl.classList.toggle('open', on);
   matrixToggle.setAttribute('aria-expanded', String(on));
   if (!on) { matrixTest = null; updateState(); }
   renderMatrix();
 }
-matrixToggle.addEventListener('click', () => showMatrix(!!matrixEl.hidden));
-$('#matrix-close').addEventListener('click', () => showMatrix(false));
+matrixToggle.addEventListener('click', () => showMatrix(!matrixOpen));
+renderMatrix();   // sets the tab title
+// The info card (bottom right) gives way to the tab (top right): publish the tab's height.
+new ResizeObserver(() => document.body.style.setProperty('--matrix-h', `${matrixEl.offsetHeight}px`)).observe(matrixEl);
 $('#legend-all').addEventListener('click', () => { slotHidden.fill(false); soloSlot = -1; updateState(); });
 
 const toggle = (id: string, fn: (on: boolean) => void) => {

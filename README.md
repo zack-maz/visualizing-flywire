@@ -40,7 +40,7 @@ Colour by shows the ten largest values in colour and the rest in a neutral; hove
 
 ## Connection matrix
 
-"Connections between these groups" (under Colour by) opens a matrix of synapses between the values of the
+The **Connections** tab (top right) expands into a matrix of synapses between the values of the
 current colour-by grouping: rows send, columns receive (pairs with 5+ synapses). Groupings with more than 24
 values show the 16 largest plus "Other". Scale by share of each row's output, or by synapse count (log).
 Hover a cell for its numbers and to show just those two groups in 3D; click a row or column name to focus it.

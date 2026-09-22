@@ -45,7 +45,6 @@
           <select id="colour-by" aria-label="Colour by"></select>
           <div id="legend"></div>
           <p class="hint">Hover to isolate · click to hide · double-click to show only one</p>
-          <button id="matrix-toggle" class="link-btn matrix-toggle" aria-expanded="false" aria-controls="matrix">Connections between these groups</button>
         </section>
 
         <section>
@@ -94,18 +93,22 @@
 
     <div id="info" class="card" hidden></div>
 
-    <section id="matrix" class="matrix-panel" hidden aria-label="Connection matrix">
+    <!-- Connection matrix: a floating tab, top right; click the header to expand. -->
+    <section id="matrix" class="matrix-panel" aria-label="Connection matrix">
       <div class="matrix-head">
-        <h2 id="matrix-title">Connections</h2>
-        <div class="segmented" role="group" aria-label="Scale">
+        <button id="matrix-toggle" class="matrix-tab" aria-expanded="false" aria-controls="matrix-content">
+          <span class="chev" aria-hidden="true">›</span><span id="matrix-title">Connections</span>
+        </button>
+        <div class="segmented matrix-scale" role="group" aria-label="Scale">
           <button type="button" data-scale="share" aria-pressed="true">Share of output</button>
           <button type="button" data-scale="synapses" aria-pressed="false">Synapses</button>
         </div>
-        <button id="matrix-close" class="icon-btn" aria-label="Close connection matrix">×</button>
       </div>
-      <div class="matrix-body"></div>
-      <div class="matrix-key"></div>
-      <p class="matrix-readout" aria-live="polite"></p>
+      <div id="matrix-content" class="matrix-content" hidden>
+        <div class="matrix-body"></div>
+        <div class="matrix-key"></div>
+        <p class="matrix-readout" aria-live="polite"></p>
+      </div>
     </section>
 
     <div id="loading">
