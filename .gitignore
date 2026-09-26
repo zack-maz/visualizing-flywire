@@ -5,3 +5,4 @@ data/raw
 .DS_Store
 *.tmp
 __pycache__/
+.vercel
